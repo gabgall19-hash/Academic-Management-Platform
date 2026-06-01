@@ -95,7 +95,7 @@ export const handlePrintParteSemanal_AllGrades = (data, allSchedules) => {
         <div class="title-row">
           <div>Parte Semanal de Asistencia</div>
           <div>Curso: ${course.ano} ${course.division}</div>
-          <div>Mes: ${currentMonth}</div>
+          <div>Mes: </div>
         </div>
 
         <div class="meta-row">
