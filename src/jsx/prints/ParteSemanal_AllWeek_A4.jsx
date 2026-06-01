@@ -44,6 +44,21 @@ export const handlePrintParteSemanal_AllWeek = (data, course, scheduleData, sele
     grid = [];
   }
 
+  const uniqueSubstitutes = [];
+  grid.forEach(row => {
+    if (row.type !== 'break' && row.days) {
+      ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].forEach(day => {
+        const d = row.days?.[day];
+        if (d?.substitute_teacher) {
+          const subName = d.substitute_teacher.replace(/^Prof\.\s*/i, '').trim();
+          if (subName && !uniqueSubstitutes.includes(subName)) {
+            uniqueSubstitutes.push(subName);
+          }
+        }
+      });
+    }
+  });
+
   let leftCount = 20;
   let rightCount = 0;
   if (students.length <= 20) { leftCount = 20; rightCount = 0; }
@@ -165,7 +180,8 @@ export const handlePrintParteSemanal_AllWeek = (data, course, scheduleData, sele
                       <td>
                         <span class="cell-subject">${abbreviateSubject(subject, 25)}</span>
                         <span class="cell-teacher">${d?.teacher ? (d.teacher.startsWith('Prof.') ? d.teacher : 'Prof. ' + d.teacher) : ''}</span>
-                        <span class="signature-line"></span>
+                        ${d?.substitute_teacher ? `<span class="cell-teacher" style="margin-top: 0px;">Supl. ${d.substitute_teacher.replace(/^Prof\.\s*/i, '')}</span>` : ''}
+                        <span class="signature-line" style="${d?.substitute_teacher ? 'height: 14px; margin-top: 2px;' : ''}"></span>
                       </td>
                     `;
                   }).join('')}
@@ -177,9 +193,9 @@ export const handlePrintParteSemanal_AllWeek = (data, course, scheduleData, sele
       </div>
 
       <div class="footer-suplentes">
-        <div class="suplente-box">SUPLENTE N° 1</div>
-        <div class="suplente-box">SUPLENTE N° 2</div>
-        <div class="suplente-box">SUPLENTTE N° 3</div>
+        <div class="suplente-box">SUPLENTE N° 1${uniqueSubstitutes[0] ? `<br/>${uniqueSubstitutes[0].toUpperCase()}` : ''}</div>
+        <div class="suplente-box">SUPLENTE N° 2${uniqueSubstitutes[1] ? `<br/>${uniqueSubstitutes[1].toUpperCase()}` : ''}</div>
+        <div class="suplente-box">SUPLENTE N° 3${uniqueSubstitutes[2] ? `<br/>${uniqueSubstitutes[2].toUpperCase()}` : ''}</div>
       </div>
     </div>
   `).join('');
